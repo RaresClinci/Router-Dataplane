@@ -1,0 +1,57 @@
+ Pe parcursul temei am realizat toate cerintele(Procesul de dirijare,
+Longest Prefix Match eficient, Protocolul ARP, Protocolul ICMP).
+
+Modul de functionare:
+ Se verifica din antetul ethernet daca destinatia este corecta(macul)
+routerului
+sau broadcast)
+ Se verifica tipul pachetului:
+  IPv4:
+   Daca destinatia este routerul, se verifica daca este un 'Echo
+Request', 
+caz in care se trimite un pachet ICMP 'Echo reply' inapoi
+   Se verifica checksumul
+   Se verifica ttl-ul, daca este prea mic se trimite inapoi un pachet
+ICMP de tip 11.
+   Se updateaza ttl-ul si checksum-ul folosind formula specifica.
+   Se obtine din tabela de rutare urmatorul nod de retea catre
+destinatie.
+   Se obtine adresa mac a destinatiei, daca nu se gaseste, folosim
+functionalitatile descrise la sectiunea ARP.
+   In final, se trimite pachetul.
+  ARP:
+   Daca primim un request, vedem daca este pentru noi si raspundem, daca
+nu este, il transmitem mai departe
+   La fel procedam si pentru reply
+
+Protocolul ARP:
+ Utilizam drept cache un vector a carui dimensiune o crestem.
+ Cand nu se gaseste in vector o intrare mac, se face un ARP Request,
+transmis ca Broadcast pe interfata destinatiei pentru care vrem sa stim
+macul.
+ Pachetul este pus in asteptare intr-o coada.
+ Daca un ARP reply este destinat noua, il adaugam in tabela si
+trimitem toate pachetele din coada cu destinatia primita.
+
+Protocolul ICMP:
+ Reprezentat de functia sendICMP, capabila sa trimita pachete de orice
+tip ICMP.
+ Este folosit pentru: expirarea ttl-ului, neidentificarea unui nod
+urmator si pentru a trimite 'Echo Reply'
+
+Longest Prefix Match eficient:
+ Dupa parsarea tabelei cu functia pusa la dispozitie, ea este
+transformata intr-un trie.
+ Trie-ul are 2 fii reprezentand daca in adresa urmeaza un bit de 0 sau
+de 1.
+ Nodul de Trie contine un camp entry care este NULL daca nu descrie calea
+pana acolo o conexiune sau intrarea din tabela de rutare in caz contrar.
+ Accesarea unui element de face in O(1), Trie-ul fiind nevoit sa parcurga
+pana la maxim distanta de 32 fata de radacina pentru o intrare cu masca:
+255:255:255:255.
+ Algoritmul pierde din eficienta la constructia Trie-ului, unde trebuie
+adaugat in O(1) fiecare element din tabela de rutare, avand o complexitat de O(n), insa castiga pe termen lung prin accesarile de O(1).
+
+
+
+ 
